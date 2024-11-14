@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+{%load static%}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Manager</title>
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Sign Out Button -->
+        <h1 class="my-4">Welcome, {{ request.user }}</h1>
+        <div class="d-flex justify-content-end mt-3">
+            <a href="{% url 'signout' %}" class="btn btn-danger">Sign Out</a>
+        </div>
+
+        
+        
+        <div class="w-75 border rounded border-3 shadow mx-auto mt-5 p-4">
+            <h2 class="mb-4">Add New Expense</h2>
+            <form action="" method="post">
+                {% csrf_token %}
+                
+                <div class="inpu    t-group mb-3">
+                    <input type="text" class="form-control" placeholder="Enter expense" name="title" required>
+                    <input type="number" class="form-control" placeholder="Amount" name="amount" required>
+                    <input type="text" class="form-control" placeholder="Category" name="category">
+                    <input type="date" class="form-control" placeholder="expense_date" name="expense_date">
+                    <button class="btn btn-outline-success" type="submit" id="button-addon2">ADD</button>
+                </div>
+
+                <!-- Display form errors if any -->
+                {% if form.errors %}
+                    <div class="alert alert-danger">
+                        {{ form.errors }}
+                    </div>
+                {% endif %}
+            </form>
+            
+            <h2 class="mt-5">Expense List</h2>
+            <div>
+                {% for e in data %}
+                <div class="w-100 border rounded bg-body-tertiary mb-2 p-2">
+                    <div style="color:orangered;">
+                        <strong>{{ e.title }} </strong>- {{ e.amount }} - {{ e.category }}
+                    </div>
+                    
+                   
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'delete' e.id %}" class="text-danger">Remove</a>
+                        <a href="{% url 'update' e.id %}" class="text-success">Update</a>
+                    </div>
+                </div>
+                {% empty %}
+                <p>No expenses found.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>
