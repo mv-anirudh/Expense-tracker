@@ -1,55 +1,183 @@
 <!DOCTYPE html>
-{%load static%}
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Expense Manager</title>
-    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+    <title>Expense Tracker</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        .header {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+        }
+
+        .card-header {
+            font-weight: 500;
+            font-size: 1rem;
+            color: #555;
+            background-color: white;
+            border: n;
+            margin-bottom: 10px;
+        }
+
+        .expense-value {
+            font-size: 2rem;
+            color: #ff4d4d;
+            font-weight: 600;
+        }
+
+        .percentage-value {
+            font-size: 1.5rem;
+            color: #28a745;
+            font-weight: 500;
+        }
+
+        .expense-trend {
+            width: 100%;
+            height: 250px;
+            background: linear-gradient(to bottom, rgba(255, 0, 0, 0.1), rgba(255, 0, 0, 0));
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        .add-transaction-btn {
+            background-color: #333;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            font-weight: 500;
+            border-radius: 8px;
+        }
+
+        .signout-icon {
+            color: #333;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .transaction {
+            color: #ff4d4d;
+            font-weight: 500;
+        }
+
+        .text-muted {
+            font-size: 0.875rem;
+        }
+
+        .edit-icon {
+            font-size: 0.9rem;
+            color: #888;
+            margin-left: 10px;
+        }
+    </style>
 </head>
+
 <body>
-    <div class="container">
-        <!-- Sign Out Button -->
-        <h1 class="my-4">Welcome, {{ request.user }}</h1>
-        <div class="d-flex justify-content-end mt-3">
-            <a href="{% url 'signout' %}" class="btn btn-danger">Sign Out</a>
+    <div class="container mt-5">
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="header">Expense Tracker</div>
+            <div class="d-flex align-items-center">
+                <!-- Button trigger modal -->
+                <button type="button" class="btn btn-dark me-1" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                    +Add taransaction
+                </button>
+
+                <!-- Modal -->
+                <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false"
+                    tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                    <div class="modal-dialog  modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="staticBackdropLabel">Add transaction</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form action="" method="post">
+                                    {% csrf_token %}
+                                    {{form}}
+                                    <div class="modal-footer">
+
+                                    </div>
+                                    <button type="submit" class="btn btn-dark mt-2">Add</button>
+
+                                </form>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <a href="{%url 'signout'%}">
+                    <button class="btn">
+                        <i class="fas fa-sign-out-alt signout-icon"></i>
+                    </button>
+                </a>
+            </div>
         </div>
 
-        
-        
-        <div class="w-75 border rounded border-3 shadow mx-auto mt-5 p-4">
-            <h2 class="mb-4">Add New Expense</h2>
-            <form action="" method="post">
-                {% csrf_token %}
-                
-                <div class="inpu    t-group mb-3">
-                    <input type="text" class="form-control" placeholder="Enter expense" name="title" required>
-                    <input type="number" class="form-control" placeholder="Amount" name="amount" required>
-                    <input type="text" class="form-control" placeholder="Category" name="category">
-                    <input type="date" class="form-control" placeholder="expense_date" name="expense_date">
-                    <button class="btn btn-outline-success" type="submit" id="button-addon2">ADD</button>
+        <div class="row mt-4">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="card-header">Expense Trend</div>
+                        <div class="expense-trend"></div> <!-- Placeholder for chart -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card mb-3">
+                    <div class="card-body text-center">
+                        <div class="card-header">Total Expenses</div>
+                        <div class="expense-value">₹2,589.00</div>
+                    </div>
                 </div>
 
-                <!-- Display form errors if any -->
-                {% if form.errors %}
-                    <div class="alert alert-danger">
-                        {{ form.errors }}
+                <div class="card mb-3">
+                    <div class="card-body text-center">
+                        <div class="card-header">This Month vs Last Month</div>
+                        <div class="percentage-value">+15.5%</div>
                     </div>
-                {% endif %}
-            </form>
-            
-            <h2 class="mt-5">Expense List</h2>
-            <div>
+                </div>
+
+                <div class=" ">
+                    <h4 class="">Recent Transactions</h4>
+                        <!-- <div class="">
+                            <div class=" text-center">Recent Transactions</div>
+
+                        </div> -->
+
+                </div>
                 {% for e in data %}
-                <div class="w-100 border rounded bg-body-tertiary mb-2 p-2">
-                    <div style="color:orangered;">
-                        <strong>{{ e.title }} </strong>- {{ e.amount }} - {{ e.category }}
-                    </div>
-                    
-                   
-                    <div class="d-flex justify-content-between">
-                        <a href="{% url 'delete' e.id %}" class="text-danger">Remove</a>
-                        <a href="{% url 'update' e.id %}" class="text-success">Update</a>
+                <div class="transaction-item bg-white p-3 mb-1 rounded shadow">
+                    <h5 class="mt-1">{{ e.title }}</h5>
+                    <p class="mb-0"><small>Amount: {{ e.amount }}</small></p>
+                    <p class="mb-0"><small>Category: {{ e.category }}</small></p>
+                    <div class="d-flex justify-content-between ">
+                        <a href="{% url 'delete' e.id %}" class="text-danger nav-link">Remove</a>
+                        <a href="{% url 'update' e.id %}" class="text-success nav-link">Update</a>
                     </div>
                 </div>
                 {% empty %}
@@ -59,4 +187,5 @@
         </div>
     </div>
 </body>
+
 </html>

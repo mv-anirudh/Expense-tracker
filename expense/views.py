@@ -1,4 +1,4 @@
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.views import View
 from expense.models import Expense
 from expense.forms import ExpenseForm, SignInForm, SignUpForm
@@ -127,12 +127,34 @@ class ExpenseDeleteView(View):
 @method_decorator(decs,name="dispatch")
 
 class ExpenseUpdateView(View):
+    template_name="update.html"
     
-    def get(self,request,*args,**kwargs):
-        
-        id=kwargs.get("pk")
-        
-        Expense.objects.filter(id=id).update()
-        
-        return redirect("index")
+    form_class = ExpenseForm
 
+    def get(self, request, *args, **kwargs):
+        # Retrieve the expense instance by primary key (id)
+        expense_id = kwargs.get("pk")
+        expense_object = get_object_or_404(Expense, id=expense_id)
+        
+        # Create a form instance pre-filled with the expense data
+        form_instance = self.form_class(instance=expense_object)
+        
+        # Render the form in the template
+        return render(request, self.template_name, {"form": form_instance})
+    
+    def post(self, request, *args, **kwargs):
+        # Retrieve the expense instance by primary key (id)
+        expense_id = kwargs.get("pk")
+        expense_object = get_object_or_404(Expense, id=expense_id)
+        
+        # Bind the POST data and files to the form instance
+        form_instance = self.form_class(request.POST, files=request.FILES, instance=expense_object)
+        
+        if form_instance.is_valid():
+        
+            form_instance.save()
+            
+            return redirect("index")
+        
+       
+        return render(request, self.template_name, {"form": form_instance})
