@@ -22,10 +22,11 @@ class SignInForm(forms.Form):
 class ExpenseForm(forms.ModelForm):
     class Meta:
         model = Expense
-        fields = ["title", "amount", "category", "expense_date"]
+        fields = ["title", "amount", "category","payment_method", "expense_date" ]
         widgets = {
             "title": forms.TextInput(attrs={"class": "form-control"}),
             "amount": forms.NumberInput(attrs={"class": "form-control"}),
-            "category": forms.TextInput(attrs={"class": "form-control"}),
+            "category": forms.Select(attrs={"class": "form-control"}),
+            "payment_method":forms.Select(attrs={"class":"form-control"}),
             "expense_date": forms.DateInput(attrs={"class": "form-control", "type": "date"}),
         }
